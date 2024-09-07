@@ -1,0 +1,14 @@
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\bin\Debug\net7.0\Comands_pattern.exe
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\bin\Debug\net7.0\Comands_pattern.deps.json
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\bin\Debug\net7.0\Comands_pattern.runtimeconfig.json
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\bin\Debug\net7.0\Comands_pattern.dll
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\bin\Debug\net7.0\Comands_pattern.pdb
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.AssemblyInfoInputs.cache
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.AssemblyInfo.cs
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.csproj.CoreCompileInputs.cache
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.dll
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\refint\Comands_pattern.dll
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.pdb
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\Comands_pattern.genruntimeconfig.cache
+D:\Programming\.NET\Home Tasks\Command_pattern\Comands_pattern\Comands_pattern\obj\Debug\net7.0\ref\Comands_pattern.dll
