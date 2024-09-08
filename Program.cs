@@ -8,19 +8,62 @@ public interface ICalculator
 // Класс "Получатель"
 public class Light
 {
-    public void PlusVelue(double a, double b)
+    public void PlusVelue(double firstValue, double secondValue)
     {
-        Console.WriteLine("Ваш ответ:\n");
-        double result = a + b;
+        double result = firstValue + secondValue;
+        Console.WriteLine("Ваш ответ:\n");        
         Console.WriteLine(result);
     }
-    public void MinusVelue(double a, double b)
+    public void MinusVelue(double firstValue, double secondValue)
     {
+        double result = firstValue - secondValue;
+        Console.WriteLine("Ваш ответ:\n");        
+        Console.WriteLine(result);
+    }
+    public void SplitVelue(double firstValue, double secondValue)
+    {
+        double result = firstValue / secondValue;
         Console.WriteLine("Ваш ответ:\n");
-        double result = a - b;
+        Console.WriteLine(result);
+    }
+    public void MultiplyVelue(double firstValue, double secondValue)
+    {
+        double result = firstValue * secondValue;
+        Console.WriteLine("Ваш ответ:\n");
         Console.WriteLine(result);
     }
 }
+// Конкретная команда для деления чисел
+public class SplitOnCommand : ICalculator
+{
+    private readonly Light _light;
+
+    public SplitOnCommand(Light light)
+    {
+        _light = light;
+    }
+
+    public void Execute(double a, double b)
+    {
+        _light.SplitVelue(a, b);
+    }
+}
+// Конкретная команда для деления чисел
+public class MultiplyOnCommand : ICalculator
+{
+    private readonly Light _light;
+
+    public MultiplyOnCommand(Light light)
+    {
+        _light = light;
+    }
+
+    public void Execute(double a, double b)
+    {
+        _light.MultiplyVelue(a, b);
+    }
+}
+// Конкретная команда для разности чисел
 public class MinusOnCommand : ICalculator
 {
     private readonly Light _light;
@@ -50,65 +93,84 @@ public class PlusOnCommand : ICalculator
         _light.PlusVelue(a, b);
     }
 }
-// Конкретная команда для выключения света
-/*public class TurnOffCommand : ICalculator
-{
-    private readonly Light _light;
-
-    public TurnOffCommand(Light light)
-    {
-        _light = light;
-    }
-
-    public void Execute()
-    {
-        _light.TurnOff();
-    }
-
-    public void Execute(double a, double b)
-    {
-        throw new NotImplementedException();
-    }
-}*/
 // Класс инициатора
 public class RemoteControl
 {
-    private ICalculator _command;
-    private string valueForDo;
+    private ICalculator plus;
+    private ICalculator minus;
+    private ICalculator multiply;
+    private ICalculator split;
 
-    public void SetCommand(ICalculator command)
+    private double valueOne;
+    private double valueTwo;
+    private string valueForDo;
+    
+    public void SetCommandPlus(ICalculator command)
     {
-        _command = command;
+        plus = command;
+    }
+    public void SetCommandMinus(ICalculator command)
+    {
+        minus = command;
+    }
+    public void SetCommandMultiply(ICalculator command)
+    {
+        multiply = command;
+    }
+    public void SetCommandSplit(ICalculator command)
+    {
+        split = command;
     }
 
+    private void sortForDo(string valueForDo)
+    {
+        if (valueForDo == "+")
+            plus.Execute(valueOne, valueTwo);
+        else if (valueForDo == "-")
+            minus.Execute(valueOne, valueTwo);
+        else if (valueForDo == "/")
+            split.Execute(valueOne, valueTwo);
+        else if (valueForDo == "*")
+            multiply.Execute(valueOne, valueTwo);
+        else
+            Console.WriteLine("Произошла ошибка, перезапустите приложение");       
+    }
     public void PressButton()
     {
         Console.WriteLine("Введите первое число:\n");
-        double valueOne = double.Parse(Console.ReadLine());
-        Console.WriteLine("Введите действие:\n");
-        string valueForDo = Console.ReadLine();
+        valueOne = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("Введите действие(+|-|/|*):\n");
+        valueForDo = Console.ReadLine();
 
         Console.WriteLine("Введите второе число:\n");
-        double valueTwo = double.Parse(Console.ReadLine());
+        valueTwo = double.Parse(Console.ReadLine());
 
-        _command.Execute(valueOne, valueTwo);
+        sortForDo(valueForDo);        
     }
 }
 class Program
 {
     static void Main(string[] args)
-    {       
+    {
         // Создаем получателя
         Light livingRoomLight = new Light();
+        //Создадим команды
+        var plusCommand = new PlusOnCommand(livingRoomLight);
+        var minusCommand = new MinusOnCommand(livingRoomLight);
+        var splitCommand = new SplitOnCommand(livingRoomLight);
+        var multiplyCommand = new MultiplyOnCommand(livingRoomLight);
+        //Инциаторы
+        var remote = new RemoteControl();
+        //Привязка команд
+        remote.SetCommandPlus(plusCommand);
+        remote.SetCommandMinus(minusCommand);
+        remote.SetCommandSplit(splitCommand);
+        remote.SetCommandMultiply(multiplyCommand);
 
-        // Создаем команды
-        ICalculator turnOnCommand = new PlusOnCommand(livingRoomLight);
-       
-        // Создаем инициатора
-        RemoteControl remote = new RemoteControl();
-      
-        // Включаем свет
-        remote.SetCommand(turnOnCommand);
-        remote.PressButton();
+        while (true)
+        {
+            remote.PressButton();
+        }
     }
 }
