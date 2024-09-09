@@ -1,4 +1,5 @@
 ﻿// Интерфейс команды
+using System.ComponentModel.Design;
 using System.Windows.Input;
 
 public interface ICalculator
@@ -11,13 +12,13 @@ public class Light
     public void PlusVelue(double firstValue, double secondValue)
     {
         double result = firstValue + secondValue;
-        Console.WriteLine("Ваш ответ:\n");        
+        Console.WriteLine("Ваш ответ:\n");
         Console.WriteLine(result);
     }
     public void MinusVelue(double firstValue, double secondValue)
     {
         double result = firstValue - secondValue;
-        Console.WriteLine("Ваш ответ:\n");        
+        Console.WriteLine("Ваш ответ:\n");
         Console.WriteLine(result);
     }
     public void SplitVelue(double firstValue, double secondValue)
@@ -96,81 +97,225 @@ public class PlusOnCommand : ICalculator
 // Класс инициатора
 public class RemoteControl
 {
-    private ICalculator plus;
-    private ICalculator minus;
-    private ICalculator multiply;
-    private ICalculator split;
-
     private double valueOne;
     private double valueTwo;
-    private string valueForDo;
     
-    public void SetCommandPlus(ICalculator command)
+    private ICalculator _command;
+
+    public void SetCommand(ICalculator command)
     {
-        plus = command;
-    }
-    public void SetCommandMinus(ICalculator command)
-    {
-        minus = command;
-    }
-    public void SetCommandMultiply(ICalculator command)
-    {
-        multiply = command;
-    }
-    public void SetCommandSplit(ICalculator command)
-    {
-        split = command;
+        _command = command;
     }
 
-    private void sortForDo(string valueForDo)
+    public void PressButton(double valueOne, double valueTwo)
     {
-        if (valueForDo == "+")
-            plus.Execute(valueOne, valueTwo);
-        else if (valueForDo == "-")
-            minus.Execute(valueOne, valueTwo);
-        else if (valueForDo == "/")
-            split.Execute(valueOne, valueTwo);
-        else if (valueForDo == "*")
-            multiply.Execute(valueOne, valueTwo);
-        else
-            Console.WriteLine("Произошла ошибка, перезапустите приложение");       
-    }
-    public void PressButton()
-    {
-        Console.WriteLine("Введите первое число:\n");
-        valueOne = double.Parse(Console.ReadLine());
-
-        Console.WriteLine("Введите действие(+|-|/|*):\n");
-        valueForDo = Console.ReadLine();
-
-        Console.WriteLine("Введите второе число:\n");
-        valueTwo = double.Parse(Console.ReadLine());
-
-        sortForDo(valueForDo);        
+        _command.Execute(valueOne, valueTwo);
     }
 }
+
 class Program
 {
     static void Main(string[] args)
     {
         // Создаем получателя
         Light livingRoomLight = new Light();
-        //Создадим команды
-        var plusCommand = new PlusOnCommand(livingRoomLight);
-        var minusCommand = new MinusOnCommand(livingRoomLight);
-        var splitCommand = new SplitOnCommand(livingRoomLight);
-        var multiplyCommand = new MultiplyOnCommand(livingRoomLight);
-        //Инциаторы
+        ICalculator command;
+        //Инциатор
         var remote = new RemoteControl();
-        //Привязка команд
-        remote.SetCommandPlus(plusCommand);
-        remote.SetCommandMinus(minusCommand);
-        remote.SetCommandSplit(splitCommand);
-        remote.SetCommandMultiply(multiplyCommand);
 
-        while (true)
+        Console.WriteLine("Введите первое число:\n");
+        double valueOne = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("Введите действие(+|-|/|*):\n");
+        string valueForDo = Console.ReadLine();
+
+        Console.WriteLine("Введите второе число:\n");
+        double valueTwo = double.Parse(Console.ReadLine());
+
+        /*// Определяем команду через объект
+        ICalculator command = valueForDo switch
         {
-            remote.PressButton();
+            "+" => plusCommand,
+            "-" => minusCommand,
+            "*" => multiplyCommand,
+            "/" => splitCommand,
+            _ => throw new ArgumentException("Неизвестная операция.")
+        };*/
+
+        switch (valueForDo)
+        {
+            case "+":
+                command = new PlusOnCommand(livingRoomLight);
+                remote.SetCommand(command);
+                break;
+            case "-":
+                command = new MinusOnCommand(livingRoomLight);
+                remote.SetCommand(command);
+                break;              
+            case "*":
+                command = new MultiplyOnCommand(livingRoomLight);
+                remote.SetCommand(command);
+                break;
+            case "/":
+                command = new SplitOnCommand(livingRoomLight);
+                remote.SetCommand(command);
+                break;
+            default:
+                Console.WriteLine("Неизвестная команда");
+                break;            
         }
+  
+        //поехали      
+        remote.PressButton(valueOne, valueTwo);      
     }
 }
+
+/*using System.Windows.Input;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        TV tv = new TV();
+        Volume volume = new Volume();
+        MultiPult mPult = new MultiPult();
+        mPult.SetCommand(0, new TVOnCommand(tv));
+        mPult.SetCommand(1, new VolumeCommand(volume));
+        // включаем телевизор
+        mPult.PressButton(0);
+        // увеличиваем громкость
+        mPult.PressButton(1);
+        mPult.PressButton(1);
+        mPult.PressButton(1);
+        // действия отмены
+        mPult.PressUndoButton();
+        mPult.PressUndoButton();
+        mPult.PressUndoButton();
+        mPult.PressUndoButton();
+
+        Console.Read();
+    }
+}
+interface ICommand
+{
+    void Execute();
+    void Undo();
+}
+
+class TV
+{
+    public void On()
+    {
+        Console.WriteLine("Телевизор включен!");
+    }
+
+    public void Off()
+    {
+        Console.WriteLine("Телевизор выключен...");
+    }
+}
+
+class TVOnCommand : ICommand
+{
+    TV tv;
+    public TVOnCommand(TV tvSet)
+    {
+        tv = tvSet;
+    }
+    public void Execute()
+    {
+        tv.On();
+    }
+    public void Undo()
+    {
+        tv.Off();
+    }
+}
+class Volume
+{
+    public const int OFF = 0;
+    public const int HIGH = 20;
+    private int level;
+
+    public Volume()
+    {
+        level = OFF;
+    }
+
+    public void RaiseLevel()
+    {
+        if (level < HIGH)
+            level++;
+        Console.WriteLine("Уровень звука {0}", level);
+    }
+    public void DropLevel()
+    {
+        if (level > OFF)
+            level--;
+        Console.WriteLine("Уровень звука {0}", level);
+    }
+}
+
+class VolumeCommand : ICommand
+{
+    Volume volume;
+    public VolumeCommand(Volume v)
+    {
+        volume = v;
+    }
+    public void Execute()
+    {
+        volume.RaiseLevel();
+    }
+
+    public void Undo()
+    {
+        volume.DropLevel();
+    }
+}
+
+class NoCommand : ICommand
+{
+    public void Execute()
+    {
+    }
+    public void Undo()
+    {
+    }
+}
+
+class MultiPult
+{
+    ICommand[] buttons;
+    Stack<ICommand> commandsHistory;
+
+    public MultiPult()
+    {
+        buttons = new ICommand[2];
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i] = new NoCommand();
+        }
+        commandsHistory = new Stack<ICommand>();
+    }
+
+    public void SetCommand(int number, ICommand com)
+    {
+        buttons[number] = com;
+    }
+
+    public void PressButton(int number)
+    {
+        buttons[number].Execute();
+        // добавляем выполненную команду в историю команд
+        commandsHistory.Push(buttons[number]);
+    }
+    public void PressUndoButton()
+    {
+        if (commandsHistory.Count > 0)
+        {
+            ICommand undoCommand = commandsHistory.Pop();
+            undoCommand.Undo();
+        }
+    }
+}*/
